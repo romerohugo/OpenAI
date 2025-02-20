@@ -163,7 +163,7 @@ class OpenAITestsDecoder: XCTestCase {
                 .user(.init(content: .string("What's the weather like in Boston?")))
             ],
             model: .gpt3_5Turbo,
-            responseFormat: ChatQuery.ResponseFormat.jsonObject,
+            responseFormat: ["":""],
             toolChoice: .function("get_current_weather"),
             tools: [
                 .init(function: .init(

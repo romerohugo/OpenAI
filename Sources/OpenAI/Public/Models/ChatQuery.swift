@@ -47,7 +47,7 @@ public struct ChatQuery: Equatable, Codable, Streamable {
     /// An object specifying the format that the model must output. Compatible with gpt-4-1106-preview and gpt-3.5-turbo-1106.
     /// Setting to { "type": "json_object" } enables JSON mode, which guarantees the message the model generates is valid JSON.
     /// Important: when using JSON mode, you must also instruct the model to produce JSON yourself via a system or user message. Without this, the model may generate an unending stream of whitespace until the generation reaches the token limit, resulting in a long-running and seemingly "stuck" request. Also note that the message content may be partially cut off if finish_reason="length", which indicates the generation exceeded max_tokens or the conversation exceeded the max context length.
-    public let responseFormat: String?
+    public let responseFormat: [String:String]?
     /// This feature is in Beta. If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result. Determinism is not guaranteed, and you should refer to the system_fingerprint response parameter to monitor changes in the backend.
     public let seed: Int? // BETA
     /// Up to 4 sequences where the API will stop generating further tokens. The returned text will not contain the stop sequence.
@@ -86,7 +86,7 @@ public struct ChatQuery: Equatable, Codable, Streamable {
         maxCompletionTokens: Int? = nil,
         n: Int? = nil,
         presencePenalty: Double? = nil,
-        responseFormat: String? = nil,
+        responseFormat: [String:String]? = nil,
         seed: Int? = nil,
         stop: Self.Stop? = nil,
         temperature: Double? = nil,
