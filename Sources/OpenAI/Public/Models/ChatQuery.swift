@@ -10,6 +10,11 @@ import Foundation
 public struct ProductsStructuredOutput: Codable, Equatable {
     let name: String
     let schema: Schema
+    
+    public init(name: String, schema: Schema) {
+        self.name = name
+        self.schema = schema
+    }
 }
 
 public struct Schema: Codable, Equatable {
@@ -17,16 +22,33 @@ public struct Schema: Codable, Equatable {
     let properties: Properties
     let required: [String]
     let additionalProperties: Bool
+    
+    public init(type: String, properties: Properties, required: [String], additionalProperties: Bool) {
+        self.type = type
+        self.properties = properties
+        self.required = required
+        self.additionalProperties = additionalProperties
+    }
 }
 
 public struct Properties: Codable, Equatable {
     let products: ProductsSchema
+    
+    public init(products: ProductsSchema) {
+        self.products = products
+    }
 }
 
 public struct ProductsSchema: Codable, Equatable {
     let type: String
     let description: String
     let items: ProductSchema
+    
+    public init(type: String, description: String, items: ProductSchema) {
+        self.type = type
+        self.description = description
+        self.items = items
+    }
 }
 
 public struct ProductSchema: Codable, Equatable {
@@ -34,27 +56,55 @@ public struct ProductSchema: Codable, Equatable {
     let properties: ProductProperties
     let required: [String]
     let additionalProperties: Bool
+    
+    public init(type: String, properties: ProductProperties, required: [String], additionalProperties: Bool) {
+        self.type = type
+        self.properties = properties
+        self.required = required
+        self.additionalProperties = additionalProperties
+    }
 }
 
 public struct ProductProperties: Codable, Equatable {
     let name: PropertyType
     let price: PropertyType
     let categories: CategoriesSchema
+    
+    public init(name: PropertyType, price: PropertyType, categories: CategoriesSchema) {
+        self.name = name
+        self.price = price
+        self.categories = categories
+    }
 }
 
 public struct PropertyType: Codable, Equatable {
     let type: [String]
     let description: String
+    
+    public init(type: [String], description: String) {
+        self.type = type
+        self.description = description
+    }
 }
 
 public struct CategoriesSchema: Codable, Equatable {
     let type: String
     let description: String
     let items: PropertyItem
+    
+    public init(type: String, description: String, items: PropertyItem) {
+        self.type = type
+        self.description = description
+        self.items = items
+    }
 }
 
 public struct PropertyItem: Codable, Equatable {
     let type: String
+    
+    public init(type: String) {
+        self.type = type
+    }
 }
 
 
