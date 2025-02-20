@@ -673,7 +673,7 @@ public struct ChatQuery: Equatable, Codable, Streamable {
         
         case text
         case jsonObject
-        case jsonSchema(name: String, type: StructuredOutput.Type)
+        case jsonSchema(schema: JSONSchema)
         
         enum CodingKeys: String, CodingKey {
             case type
@@ -687,9 +687,8 @@ public struct ChatQuery: Equatable, Codable, Streamable {
                 try container.encode("text", forKey: .type)
             case .jsonObject:
                 try container.encode("json_object", forKey: .type)
-            case .jsonSchema(let name, let type):
+            case .jsonSchema(let schema):
                 try container.encode("json_schema", forKey: .type)
-                let schema = JSONSchema(name: name, schema: type.example)
                 try container.encode(schema, forKey: .jsonSchema)
             }
         }
@@ -698,8 +697,7 @@ public struct ChatQuery: Equatable, Codable, Streamable {
             switch (lhs, rhs) {
             case (.text, .text): return true
             case (.jsonObject, .jsonObject): return true
-            case (.jsonSchema(let lhsName, let lhsType), .jsonSchema(let rhsName, let rhsType)):
-                return lhsName == rhsName && lhsType == rhsType
+            case (.jsonSchema, .jsonSchema): return true
             default:
                 return false
             }
@@ -711,7 +709,7 @@ public struct ChatQuery: Equatable, Codable, Streamable {
             self = .text
         }
     }
-    
+/*
     private struct JSONSchema: Encodable {
         
         let name: String
@@ -749,7 +747,7 @@ public struct ChatQuery: Equatable, Codable, Streamable {
             try container.encode(true, forKey: .strict)
             try container.encode(try PropertyValue(from: schema), forKey: .schema)
         }
-    }
+    }*/
     
     private indirect enum PropertyValue: Codable {
         
