@@ -8,12 +8,14 @@
 import Foundation
 
 public struct ProductsStructuredOutput: Codable, Equatable {
+    let type: String
     let name: String
     let schema: Schema
     
-    public init(name: String, schema: Schema) {
+    public init(name: String, schema: Schema, type: String) {
         self.name = name
         self.schema = schema
+        self.type = type
     }
 }
 
