@@ -23,3 +23,7 @@ public struct FunctionDeclaration: Codable, Equatable {
       self.parameters = parameters
     }
 }
+
+public struct JSONSchema: Equatable, Codable{
+    let a: String
+}

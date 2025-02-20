@@ -47,7 +47,7 @@ public struct ChatQuery: Equatable, Codable, Streamable {
     /// An object specifying the format that the model must output. Compatible with gpt-4-1106-preview and gpt-3.5-turbo-1106.
     /// Setting to { "type": "json_object" } enables JSON mode, which guarantees the message the model generates is valid JSON.
     /// Important: when using JSON mode, you must also instruct the model to produce JSON yourself via a system or user message. Without this, the model may generate an unending stream of whitespace until the generation reaches the token limit, resulting in a long-running and seemingly "stuck" request. Also note that the message content may be partially cut off if finish_reason="length", which indicates the generation exceeded max_tokens or the conversation exceeded the max context length.
-    public let responseFormat: Self.ResponseFormat?
+    public let responseFormat: String?
     /// This feature is in Beta. If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result. Determinism is not guaranteed, and you should refer to the system_fingerprint response parameter to monitor changes in the backend.
     public let seed: Int? // BETA
     /// Up to 4 sequences where the API will stop generating further tokens. The returned text will not contain the stop sequence.
@@ -86,7 +86,7 @@ public struct ChatQuery: Equatable, Codable, Streamable {
         maxCompletionTokens: Int? = nil,
         n: Int? = nil,
         presencePenalty: Double? = nil,
-        responseFormat: Self.ResponseFormat? = nil,
+        responseFormat: String? = nil,
         seed: Int? = nil,
         stop: Self.Stop? = nil,
         temperature: Double? = nil,
@@ -669,86 +669,7 @@ public struct ChatQuery: Equatable, Codable, Streamable {
     }
 
     // See more https://platform.openai.com/docs/guides/structured-outputs/introduction
-    public enum ResponseFormat: Codable, Equatable {
-        
-        case text
-        case jsonObject
-        case jsonSchema(schema: JSONSchema)
-        
-        enum CodingKeys: String, CodingKey {
-            case type
-            case jsonSchema = "json_schema"
-        }
-        
-        public func encode(to encoder: any Encoder) throws {
-            var container = encoder.container(keyedBy: CodingKeys.self)
-            switch self {
-            case .text:
-                try container.encode("text", forKey: .type)
-            case .jsonObject:
-                try container.encode("json_object", forKey: .type)
-            case .jsonSchema(let schema):
-                try container.encode("json_schema", forKey: .type)
-                try container.encode(schema, forKey: .jsonSchema)
-            }
-        }
-        
-        public static func == (lhs: ResponseFormat, rhs: ResponseFormat) -> Bool {
-            switch (lhs, rhs) {
-            case (.text, .text): return true
-            case (.jsonObject, .jsonObject): return true
-            case (.jsonSchema, .jsonSchema): return true
-            default:
-                return false
-            }
-        }
-        
-        /// A formal initializer reqluired for the inherited Decodable conformance.
-        /// This type is never returned from the server and is never decoded into.
-        public init(from decoder: any Decoder) throws {
-            self = .text
-        }
-    }
-/*
-    private struct JSONSchema: Encodable {
-        
-        let name: String
-        let schema: StructuredOutput
-        
-        enum CodingKeys: String, CodingKey {
-            case name
-            case schema
-            case strict
-        }
-        
-        init(name: String, schema: StructuredOutput) {
-            
-            func format(_ name: String) -> String {
-                var formattedName = name.replacingOccurrences(of: " ", with: "_")
-                let regex = try! NSRegularExpression(pattern: "[^a-zA-Z0-9_-]", options: [])
-                let range = NSRange(location: 0, length: formattedName.utf16.count)
-                formattedName = regex.stringByReplacingMatches(in: formattedName, options: [], range: range, withTemplate: "")
-                formattedName = formattedName.isEmpty ? "sample" : formattedName
-                formattedName = String(formattedName.prefix(64))
-                return formattedName
-            }
-            
-            self.name = format(name)
-            self.schema = schema
-            
-            if self.name != name {
-                print("The name was changed to \(self.name) to satisfy the API requirements. See more: https://platform.openai.com/docs/api-reference/chat/create")
-            }
-        }
-        
-        public func encode(to encoder: any Encoder) throws {
-            var container = encoder.container(keyedBy: CodingKeys.self)
-            try container.encode(name, forKey: .name)
-            try container.encode(true, forKey: .strict)
-            try container.encode(try PropertyValue(from: schema), forKey: .schema)
-        }
-    }*/
-    
+
     private indirect enum PropertyValue: Codable {
         
         enum SimpleType: String, Codable {
@@ -1173,57 +1094,6 @@ public struct ChatQuery: Equatable, Codable, Streamable {
 }
 
 /// See the [guide](/docs/guides/gpt/function-calling) for examples, and the [JSON Schema reference](https://json-schema.org/understanding-json-schema/) for documentation about the format.
-public struct JSONSchema: Codable, Equatable {
-    let name: String
-    let schema: Schema
-    let strict: Bool
-}
-
-struct Schema: Codable, Equatable {
-    let type: String
-    let properties: SchemaProperties
-    let required: [String]
-    let additionalProperties: Bool
-}
-
-struct SchemaProperties: Codable, Equatable {
-    let products: ProductSchema
-}
-
-struct ProductSchema: Codable, Equatable {
-    let type: String
-    let description: String
-    let items: ProductItems
-}
-
-struct ProductItems: Codable, Equatable {
-    let type: String
-    let properties: ProductProperties
-    let required: [String]
-    let additionalProperties: Bool
-}
-
-struct ProductProperties: Codable, Equatable {
-    let name: FieldSchema
-    let price: FieldSchema
-    let categories: CategorySchema
-}
-
-struct FieldSchema: Codable, Equatable {
-    let type: [String]
-    let description: String
-}
-
-struct CategorySchema: Codable, Equatable {
-    let type: String
-    let description: String
-    let items: FieldType
-}
-
-struct FieldType: Codable, Equatable {
-    let type: String
-}
-
 
 
 public struct ChatFunctionCall: Codable, Equatable {
