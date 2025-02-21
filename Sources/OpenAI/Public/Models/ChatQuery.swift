@@ -78,10 +78,16 @@ public struct ProductSchema: Codable, Equatable {
 
 public struct ProductProperties: Codable, Equatable {
     let name: PropertyType
+    let description: PropertyType
+    let price: PropertyType
+    let brand: PropertyType
     let categories: CategoriesSchema
     
-    public init(name: PropertyType, categories: CategoriesSchema) {
+    public init(name: PropertyType,description: PropertyType , price: PropertyType,brand:PropertyType, categories: CategoriesSchema) {
         self.name = name
+        self.description = description
+        self.price = price
+        self.brand = brand
         self.categories = categories
     }
 }
